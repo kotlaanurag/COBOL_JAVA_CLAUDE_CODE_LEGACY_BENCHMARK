@@ -1,0 +1,79 @@
+spring:
+  application:
+    name: investment-portfolio
+
+  # ── Database (H2 for dev — swap for PostgreSQL in prod) ──────────────────────
+  datasource:
+    url: jdbc:h2:mem:investmentdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true        # http://localhost:8080/h2-console (dev only)
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop   # use validate in production with Flyway/Liquibase
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+  # ── Spring Batch ─────────────────────────────────────────────────────────────
+  batch:
+    jdbc:
+      initialize-schema: always   # auto-create Spring Batch metadata tables
+    job:
+      enabled: false              # do NOT auto-run jobs on startup; use REST trigger
+
+  # ── OpenAPI / Swagger ────────────────────────────────────────────────────────
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+# ── Actuator ─────────────────────────────────────────────────────────────────
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,batch
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# ── Logging ──────────────────────────────────────────────────────────────────
+logging:
+  level:
+    com.clbs.investment: DEBUG
+    org.springframework.batch: INFO
+    org.springframework.security: WARN
+
+---
+# ── Production profile (PostgreSQL) ──────────────────────────────────────────
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:postgresql://localhost:5432/investmentdb
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  h2:
+    console:
+      enabled: false
+  batch:
+    jdbc:
+      initialize-schema: never

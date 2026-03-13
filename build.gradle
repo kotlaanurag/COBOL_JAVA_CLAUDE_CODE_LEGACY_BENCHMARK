@@ -3,14 +3,9 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
     id 'java'
     id "org.sonarqube" version "7.2.3.7755"
+    id 'jacoco'
 }
 
-sonar {
-  properties {
-    property "sonar.projectKey", "kotlaanurag_cobol-java-legacy-benchmark-using-claudecode"
-    property "sonar.organization", "kotlaanurag"
-  }
-}
 
 group = 'com.clbs'
 version = '1.0.0'
@@ -59,4 +54,20 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+    }
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "kotlaanurag_cobol-java-legacy-benchmark-using-claudecode"
+        property "sonar.organization", "kotlaanurag"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
+    }
 }

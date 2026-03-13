@@ -41,6 +41,7 @@ import java.util.Map;
  * same checkpoint/restart capability as COBOL CKPRST (BCHCTL VSAM).
  * Chunk size 1000 matches COBOL checkpoint frequency of every 1000 records.
  */
+
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
